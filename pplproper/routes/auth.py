@@ -14,6 +14,7 @@ auth_routes = Blueprint("auth", __name__)
 
 
 @auth_routes.route("/password-reset/", methods=["POST"])
+@jwt_required
 def password_reset():
     email = request.json.get('email', None)
     old = request.json.get('old', None)
@@ -23,6 +24,9 @@ def password_reset():
     if not email or not old or not new:
         return jsonify({"Status": "Fill out the form properly..."}), 400
 
+    if email != get_jwt_identity():
+        return jsonify({"Status": "You can only reset your own password"}), 401
+
     # Validate user exists
     try:
         usr = Person.query.filter_by(email=email).first()
@@ -31,7 +35,7 @@ def password_reset():
 
     # Validate password is the same
     if not check_password_hash(usr.password, old):
-        return jsonify({"Status": "Invalid password"}), 400
+        return jsonify({"Status": "Invalid old password"}), 400
 
     usr.password = generate_password_hash(new)
     db.session.commit()
@@ -56,12 +60,13 @@ def login():
         return jsonify({"Status": "User does not exist"}), 400
 
     # Validate password is the same
-    # if usr.password != password:
     if not check_password_hash(usr.password, password):
         return jsonify({"Status": "Invalid password"}), 400
 
+    acc = create_access_token(identity=email)
+    refr = create_refresh_token(identity=email)
     return jsonify({"Status": "Logged In",
-                    "UserToken": "foo", "RefreshToken": "bar"})
+                    "AccessToken": acc, "RefreshToken": refr})
 # login
 
 
@@ -69,5 +74,5 @@ def login():
 @jwt_refresh_token_required
 def refresh():
     tmp = get_jwt_identity()
-    print(tmp)
-    return "foo"
+    acc = create_access_token(identity=tmp)
+    return jsonify({"Status": "Refreshed", "AccessToken": acc})

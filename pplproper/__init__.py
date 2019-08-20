@@ -16,11 +16,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = str(uri)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "foobar123"
 # app.config["SQLALCHEMY_ECHO"] = True
-# app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
-# app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(days=14)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(days=14)
 db = SQLAlchemy(app)
 db.init_app(app)
-# jwt = JWTManager(app)
+jwt = JWTManager(app)
 
 # Need to import later due to circular import issues
 from .routes.people import user_routes  # noqa

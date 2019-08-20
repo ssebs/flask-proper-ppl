@@ -12,12 +12,10 @@ Proper Flask REST API implementation, for use in production.
     - Get a person
   - PUT `/people/:id`
     - Update a person
-- Auth
+- Auth (registration is done via POSTing a person)
   - POST `/login/`
     - Login via email / password
   - POST `/password-reset/`
     - Reset a password
-  - POST `/register/`
-    - Register for a new account
   - POST `/refresh/`
     - Refresh JWT

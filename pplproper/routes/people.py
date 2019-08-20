@@ -3,10 +3,7 @@
 '''
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import jwt_refresh_token_required
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.security import generate_password_hash
 from ..models import Person
 from .. import db
 
@@ -15,6 +12,7 @@ user_routes = Blueprint("people", __name__)
 
 
 @user_routes.route("/people/", methods=["GET"])
+@jwt_required
 def all_ppl():
     ppl = []
     for p in Person.query.filter_by(active=1):
@@ -24,6 +22,7 @@ def all_ppl():
 
 
 @user_routes.route("/people/", methods=["POST"])
+@jwt_required
 def create_person():
     req_data = request.json
     if not req_data["email"]:
@@ -44,6 +43,7 @@ def create_person():
 
 
 @user_routes.route("/people/<id>", methods=["GET"])
+@jwt_required
 def one_person(id):
     try:
         person = Person.query.filter_by(id=id).one().as_dict()
@@ -54,6 +54,7 @@ def one_person(id):
 
 
 @user_routes.route("/people/<id>", methods=["PUT"])
+@jwt_required
 def update_person(id):
     fn = request.json.get("first_name", None)
     ln = request.json.get("last_name", None)
@@ -83,6 +84,7 @@ def update_person(id):
 
 
 @user_routes.route("/people/<id>", methods=["DELETE"])
+@jwt_required
 def delete_person(id):
     try:
         person = Person.query.filter_by(id=id).one()
