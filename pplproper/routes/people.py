@@ -3,9 +3,12 @@
 '''
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-# from ..util import clean_update
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import jwt_refresh_token_required
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token
 from ..models import Person
-from .. import db  # noqa
+from .. import db
 
 
 user_routes = Blueprint("people", __name__)
@@ -25,10 +28,11 @@ def create_person():
     req_data = request.json
     if not req_data["email"]:
         return jsonify({"Status": "No Email provided"})
+
     new_person = Person(
         first_name=req_data["first_name"],
         last_name=req_data["last_name"],
-        password=req_data["password"],
+        password=generate_password_hash(req_data["password"]),
         email=req_data["email"],
         active=1
     )
@@ -42,7 +46,7 @@ def create_person():
 @user_routes.route("/people/<id>", methods=["GET"])
 def one_person(id):
     try:
-        person = Person.query.filter_by(active=1, id=id).one().as_dict()
+        person = Person.query.filter_by(id=id).one().as_dict()
         return jsonify({"Status": "OK", "People": person}), 200
     except:
         return jsonify({"Status": "Person not found"}), 404
@@ -51,19 +55,30 @@ def one_person(id):
 
 @user_routes.route("/people/<id>", methods=["PUT"])
 def update_person(id):
-    req_data = request.json
+    fn = request.json.get("first_name", None)
+    ln = request.json.get("last_name", None)
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    active = request.json.get("active", None)
+    usr = None
+
     try:
         person = Person.query.filter_by(id=id).one()
-
-        person.first_name = req_data["first_name"]
-        person.last_name = req_data["last_name"]
-        person.password = req_data["password"]
-        person.email = req_data["email"]
-
-        db.session.commit()
-        return jsonify({"Status": "OK", "People": person.as_dict()}), 200
     except:
         return jsonify({"Status": "Person not found"}), 404
+
+    # set vars if they exist
+    if fn:
+        person.first_name = fn
+    if ln:
+        person.last_name = ln
+    if email:
+        person.email = email
+    if active:
+        person.active = active
+
+    db.session.commit()
+    return jsonify({"Status": "OK", "Person": person.as_dict()}), 200
 # update_person
 
 
