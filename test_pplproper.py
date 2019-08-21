@@ -13,6 +13,13 @@ from pplproper.models import Person
 
 class PPLProperTestCase(unittest.TestCase):
 
+    def create_sample_person(self):
+        ''' helper func since this gets called on every test '''
+        return self.client.post("/people/",
+                                headers=self.headers,
+                                json=self.sample_person.as_dict())
+    # create_sample_person
+
     def create_app(self):
         return create_app(config="test")
 
@@ -36,9 +43,7 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_create_person(self):
         print("Testing create person...", end="")
-        resp = self.client.post("/people/",
-                                headers=self.headers,
-                                json=self.sample_person.as_dict())
+        resp = self.create_sample_person()
 
         data = resp.json["Person"]
         status = resp.json["Status"]
@@ -52,9 +57,8 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_get_all_people(self):
         print("Testing get all people...", end="")
-        self.client.post("/people/",
-                         headers=self.headers,
-                         json=self.sample_person.as_dict())
+        self.create_sample_person()
+
         resp = self.client.get("/people/", headers=self.headers)
 
         data = resp.json["People"]
@@ -69,9 +73,8 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_get_one_person(self):
         print("Testing get one person...", end="")
-        self.client.post("/people/",
-                         headers=self.headers,
-                         json=self.sample_person.as_dict())
+        self.create_sample_person()
+
         resp = self.client.get("/people/1", headers=self.headers)
 
         data = resp.json["Person"]
@@ -86,9 +89,8 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_update_person(self):
         print("Testing update person...", end="")
-        post_resp = self.client.post("/people/",
-                                     headers=self.headers,
-                                     json=self.sample_person.as_dict())
+        post_resp = self.create_sample_person()
+
         person = post_resp.json["Person"]
         person["first_name"] = "NewName"
         resp = self.client.put("/people/1", headers=self.headers, json=person)
@@ -105,9 +107,7 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_delete_person(self):
         print("Testing delete_person...", end="")
-        self.client.post("/people/",
-                         headers=self.headers,
-                         json=self.sample_person.as_dict())
+        self.create_sample_person()
 
         resp = self.client.delete("/people/1", headers=self.headers)
 
@@ -120,6 +120,19 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_login(self):
         print("Testing login...", end="")
+        self.create_sample_person()
+
+        logon = {
+            "email": self.sample_person.email,
+            "password": self.sample_person.password
+        }
+        resp = self.client.post("/login/", json=logon)
+
+        status = resp.json["Status"]
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, "Logged In")
+        self.assertNotEqual(resp.json["AccessToken"], "")
+        self.assertNotEqual(resp.json["RefreshToken"], "")
 
         print("Done")
     # test_login
