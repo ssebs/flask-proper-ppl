@@ -46,8 +46,9 @@ class PPLProperTestCase(unittest.TestCase):
         self.assertTrue(data["active"])
         self.assertRegex(data["password"], "^pbkdf2:sha256:")
         print("Done")
+    # test_create_person
 
-    def test_get_all_users(self):
+    def test_get_all_people(self):
         print("Testing Get all People...", end="")
         self.client.post("/people/",
                          headers=self.headers,
@@ -60,6 +61,37 @@ class PPLProperTestCase(unittest.TestCase):
         self.assertEqual(data[0]["first_name"], "Test")
 
         print("Done")
+    # test_get_all_people
+
+    def test_update_person(self):
+        print("Testing ...", end="")
+
+        print("Done")
+    # test_update_person
+
+    def test_delete_person(self):
+        print("Testing delete_person...", end="")
+
+        print("Done")
+    # test_delete_person
+
+    def test_login(self):
+        print("Testing login...", end="")
+
+        print("Done")
+    # test_login
+
+    def test_refresh_jwt(self):
+        print("Testing refresh jwt...", end="")
+
+        print("Done")
+    # test_refresh_jwt
+
+    def test_password_reset(self):
+        print("Testing password reset...", end="")
+
+        print("Done")
+    # test_password_reset
 
     def tearDown(self):
         db.session.remove()
