@@ -1,6 +1,8 @@
 # ppl-proper
 
-Proper Flask REST API implementation, for use in production.
+Proper Flask REST API implementation.
+
+Includes Python Flask Package, SQLAlchemy ORM, Testing, venv, etc.
 
 ## Routes
 - People
@@ -24,3 +26,14 @@ Proper Flask REST API implementation, for use in production.
 ```bash
 $ python test_pplproper.py
 ```
+
+## Running
+- First time?
+  - Follow install guide
+  - `$ python init_db.py`
+- Dev?
+  - `$ python run.py`
+- Production?
+  - Install gunicorn, use `wsgi:app` as the app pkg & setup SSL/reverse proxy via nginx or apache, and setup a .service file for systemd
+  - e.g.
+    - `$ gunicorn wsgi:app`

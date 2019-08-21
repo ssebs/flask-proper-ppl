@@ -21,7 +21,7 @@ class PPLProperTestCase(unittest.TestCase):
         self.sample_person = Person(
             first_name="Test",
             last_name="User",
-            email="tuser@parc.com",
+            email="tuser@test.com",
             password="test"
         )
         with self.app.test_request_context() as ctx:
