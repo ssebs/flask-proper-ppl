@@ -50,6 +50,14 @@ class PPLProperTestCase(unittest.TestCase):
             self.client = self.app.test_client()
     # setUp
 
+    def test_test_route(self):
+        print("Testing test route...", end="")
+        resp = self.client.get("/")
+
+        self.assertEqual(resp.status_code, 200)
+        print("Done")
+    # test_test_route
+
     def test_create_person(self):
         print("Testing create person...", end="")
         resp = self.create_sample_person()
