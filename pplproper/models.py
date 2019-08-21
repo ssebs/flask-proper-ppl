@@ -16,7 +16,8 @@ class Person(db.Model):
     active = db.Column(db.Boolean)
 
     def __repr__(self):
-        return f"Usr: {self.first_name} {self.last_name}: {self.email}: {self.active}"
+        return f"Usr: {self.first_name} {self.last_name}: \
+            {self.email}: {self.active}"
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

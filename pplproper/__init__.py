@@ -16,18 +16,14 @@ production_db_name = "prod.db"
 
 
 def create_app(config):
-    if config == "test":
-        # import os
-        # try:
-        #     os.remove(f"{__name__}/{test_db_name}")
-        # except:
-        #     pass
-        uri = f"sqlite:///{test_db_name}"
-    else:
-        uri = f"sqlite:///{production_db_name}"
-
     app = Flask(__name__)
     CORS(app)
+
+    if config == "test":
+        uri = f"sqlite:///{test_db_name}"
+        app.config["TESTING"] = True
+    else:
+        uri = f"sqlite:///{production_db_name}"
 
     app.config["SQLALCHEMY_DATABASE_URI"] = str(uri)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -49,5 +45,6 @@ def create_app(config):
     def test():
         return "Server up and running"
 
+    app.app_context().push()
     return app
 # create_app

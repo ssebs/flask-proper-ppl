@@ -19,3 +19,8 @@ Proper Flask REST API implementation, for use in production.
     - Reset a password
   - POST `/refresh/`
     - Refresh JWT
+
+## Testing
+```bash
+$ python test_pplproper.py
+```
