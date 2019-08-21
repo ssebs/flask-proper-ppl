@@ -47,7 +47,7 @@ def create_person():
 def one_person(id):
     try:
         person = Person.query.filter_by(id=id).one().as_dict()
-        return jsonify({"Status": "OK", "People": person}), 200
+        return jsonify({"Status": "OK", "Person": person}), 200
     except:
         return jsonify({"Status": "Person not found"}), 404
 # one_person
@@ -79,7 +79,7 @@ def update_person(id):
         person.active = active
 
     db.session.commit()
-    return jsonify({"Status": "OK", "Person": person.as_dict()}), 200
+    return jsonify({"Status": "Updated", "Person": person.as_dict()}), 200
 # update_person
 
 

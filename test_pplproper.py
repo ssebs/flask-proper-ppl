@@ -35,12 +35,14 @@ class PPLProperTestCase(unittest.TestCase):
     # setUp
 
     def test_create_person(self):
-        print("Testing Create Person...", end="")
+        print("Testing create person...", end="")
         resp = self.client.post("/people/",
                                 headers=self.headers,
                                 json=self.sample_person.as_dict())
-        data = resp.json["Person"]
 
+        data = resp.json["Person"]
+        status = resp.json["Status"]
+        self.assertEqual(status, "Created")
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(data["first_name"], "Test")
         self.assertTrue(data["active"])
@@ -49,13 +51,15 @@ class PPLProperTestCase(unittest.TestCase):
     # test_create_person
 
     def test_get_all_people(self):
-        print("Testing Get all People...", end="")
+        print("Testing get all people...", end="")
         self.client.post("/people/",
                          headers=self.headers,
                          json=self.sample_person.as_dict())
         resp = self.client.get("/people/", headers=self.headers)
-        data = resp.json["People"]
 
+        data = resp.json["People"]
+        status = resp.json["Status"]
+        self.assertEqual(status, "OK")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(type(data), list)
         self.assertEqual(data[0]["first_name"], "Test")
@@ -63,14 +67,53 @@ class PPLProperTestCase(unittest.TestCase):
         print("Done")
     # test_get_all_people
 
+    def test_get_one_person(self):
+        print("Testing get one person...", end="")
+        self.client.post("/people/",
+                         headers=self.headers,
+                         json=self.sample_person.as_dict())
+        resp = self.client.get("/people/1", headers=self.headers)
+
+        data = resp.json["Person"]
+        status = resp.json["Status"]
+        self.assertEqual(status, "OK")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(type(data), dict)
+        self.assertEqual(data["first_name"], "Test")
+
+        print("Done")
+    # test_get_one_person
+
     def test_update_person(self):
-        print("Testing ...", end="")
+        print("Testing update person...", end="")
+        post_resp = self.client.post("/people/",
+                                     headers=self.headers,
+                                     json=self.sample_person.as_dict())
+        person = post_resp.json["Person"]
+        person["first_name"] = "NewName"
+        resp = self.client.put("/people/1", headers=self.headers, json=person)
+
+        data = resp.json["Person"]
+        status = resp.json["Status"]
+        self.assertEqual(status, "Updated")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(data["first_name"], "NewName")
+        self.assertEqual(data["id"], 1)
 
         print("Done")
     # test_update_person
 
     def test_delete_person(self):
         print("Testing delete_person...", end="")
+        self.client.post("/people/",
+                         headers=self.headers,
+                         json=self.sample_person.as_dict())
+
+        resp = self.client.delete("/people/1", headers=self.headers)
+
+        status = resp.json["Status"]
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, "Deleted")
 
         print("Done")
     # test_delete_person

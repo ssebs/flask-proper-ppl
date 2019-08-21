@@ -14,6 +14,8 @@ Includes Python Flask Package, SQLAlchemy ORM, Testing, venv, etc.
     - Get a person
   - PUT `/people/:id`
     - Update a person
+  - DELETE `/people/id`
+    - Deactivate a person
 - Auth (registration is done via POSTing a person)
   - POST `/login/`
     - Login via email / password
