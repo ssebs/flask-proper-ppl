@@ -1,8 +1,6 @@
 # ppl-proper
 
-[![pipeline status](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/badges/master/pipeline.svg)](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/commits/master)
-
-[![coverage report](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/badges/master/coverage.svg)](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/commits/master)
+[![pipeline status](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/badges/master/pipeline.svg)](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/commits/master) [![coverage report](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/badges/master/coverage.svg)](https://gitlab-internal.parc.com/ssafari/flask-proper-ppl/commits/master)
 
 
 Proper Flask REST API implementation.
