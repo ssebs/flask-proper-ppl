@@ -130,7 +130,6 @@ class PPLProperTestCase(unittest.TestCase):
     def test_login(self):
         print("Testing login...", end="")
         self.create_sample_person()
-
         resp = self.login_sample_person()
 
         status = resp.json["Status"]
@@ -145,9 +144,10 @@ class PPLProperTestCase(unittest.TestCase):
     def test_refresh_jwt(self):
         print("Testing refresh jwt...", end="")
         self.create_sample_person()
-
         login_resp = self.login_sample_person()
-        headers = {"Authorization": f"Bearer {login_resp.json['RefreshToken']}"}  # noqa
+        headers = {
+            "Authorization": f"Bearer {login_resp.json['RefreshToken']}"
+        }
 
         resp = self.client.post("/refresh/", headers=headers)
 
@@ -155,13 +155,39 @@ class PPLProperTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(status, "Refreshed")
         self.assertNotEqual(resp.json["AccessToken"], "")
+        self.assertNotEqual(resp.json["AccessToken"],
+                            login_resp.json["AccessToken"])
 
         print("Done")
     # test_refresh_jwt
 
     def test_password_reset(self):
         print("Testing password reset...", end="")
-        self.create_sample_person()
+        orig_person_resp = self.create_sample_person()
+        login_resp = self.login_sample_person()
+
+        reset_obj = {
+            "email": self.sample_person.email,
+            "old": self.sample_person.password,
+            "new": "TEST"
+        }
+        headers = {
+            "Authorization": f"Bearer {login_resp.json['AccessToken']}"
+        }
+
+        resp = self.client.post("/password-reset/",
+                                headers=headers,
+                                json=reset_obj)
+        updated_person_resp = self.client.get("/people/1",
+                                              headers=headers,
+                                              )
+
+        old_data = orig_person_resp.json["Person"]
+        data = updated_person_resp.json["Person"]
+        status = resp.json["Status"]
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, "Updated Password")
+        self.assertNotEqual(data["password"], old_data["password"])
 
         print("Done")
     # test_password_reset
