@@ -14,11 +14,20 @@ from pplproper.models import Person
 class PPLProperTestCase(unittest.TestCase):
 
     def create_sample_person(self):
-        ''' helper func since this gets called on every test '''
+        ''' helper func to create the sample user for testing '''
         return self.client.post("/people/",
                                 headers=self.headers,
                                 json=self.sample_person.as_dict())
     # create_sample_person
+
+    def login_sample_person(self):
+        ''' helper func to log the sample user in for testing '''
+        logon = {
+            "email": self.sample_person.email,
+            "password": self.sample_person.password
+        }
+        return self.client.post("/login/", json=logon)
+    # login_sample_person
 
     def create_app(self):
         return create_app(config="test")
@@ -122,11 +131,7 @@ class PPLProperTestCase(unittest.TestCase):
         print("Testing login...", end="")
         self.create_sample_person()
 
-        logon = {
-            "email": self.sample_person.email,
-            "password": self.sample_person.password
-        }
-        resp = self.client.post("/login/", json=logon)
+        resp = self.login_sample_person()
 
         status = resp.json["Status"]
         self.assertEqual(resp.status_code, 200)
@@ -139,12 +144,24 @@ class PPLProperTestCase(unittest.TestCase):
 
     def test_refresh_jwt(self):
         print("Testing refresh jwt...", end="")
+        self.create_sample_person()
+
+        login_resp = self.login_sample_person()
+        headers = {"Authorization": f"Bearer {login_resp.json['RefreshToken']}"}  # noqa
+
+        resp = self.client.post("/refresh/", headers=headers)
+
+        status = resp.json["Status"]
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, "Refreshed")
+        self.assertNotEqual(resp.json["AccessToken"], "")
 
         print("Done")
     # test_refresh_jwt
 
     def test_password_reset(self):
         print("Testing password reset...", end="")
+        self.create_sample_person()
 
         print("Done")
     # test_password_reset
