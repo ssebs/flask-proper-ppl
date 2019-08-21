@@ -1,5 +1,5 @@
 '''
-# test_bucketlist.py - Testing suite
+# test_pplproper.py - Testing suite
 '''
 import unittest
 import os
