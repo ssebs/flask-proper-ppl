@@ -22,14 +22,21 @@ Includes Python Flask Package, SQLAlchemy ORM, Testing, venv, etc.
   - POST `/refresh/`
     - Refresh JWT
 
-## Testing
-```bash
-$ python test_pplproper.py
+## Install
+- Install Python 3.6+
+- Clone the repo / download code & cd to it
 ```
+$ python3 -m venv env
+$ . ./env/bin/activate
+$ pip install -r requirements.txt
+```
+
+## Testing
+- `$ python test_pplproper.py`
 
 ## Running
 - First time?
-  - Follow install guide
+  - Follow install instructions
   - `$ python init_db.py`
 - Dev?
   - `$ python run.py`
